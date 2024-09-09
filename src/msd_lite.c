@@ -206,7 +206,7 @@ msd_hub_profile_load(const uint8_t *data, size_t data_size, str_hub_settings_p p
 	    (const uint8_t*)"fSocketTCPNoPush", NULL)) {
 		yn_set_flag32(ptm, tm, STR_HUB_S_F_SKT_TCP_NOPUSH, &params->flags);
 	}
-	
+
 	xml_get_val_size_t_args(data, data_size, NULL, &params->ring_buf_size,
 	    (const uint8_t*)"ringBufSize", NULL);
 	xml_get_val_size_t_args(data, data_size, NULL, &params->precache,
@@ -539,7 +539,7 @@ msd_http_req_url_parse(http_srv_req_p req, struct sockaddr_storage *ssaddr,
 		ifname[tm] = 0;
 		ifindex = if_nametoindex(ifname);
 	} else {
-		if (0 == http_query_val_get(req->line.query, 
+		if (0 == http_query_val_get(req->line.query,
 		    req->line.query_size, (const uint8_t*)"ifindex", 7,
 		    &ptm, &tm)) {
 			ifindex = ustr2u32(ptm, tm);
@@ -555,7 +555,7 @@ msd_http_req_url_parse(http_srv_req_p req, struct sockaddr_storage *ssaddr,
 	}
 
 	/* rejoin_time. */
-	if (0 == http_query_val_get(req->line.query, 
+	if (0 == http_query_val_get(req->line.query,
 	    req->line.query_size, (const uint8_t*)"rejoin_time", 11,
 	    &ptm, &tm)) {
 		rejointime = ustr2u32(ptm, tm);
@@ -608,10 +608,11 @@ msd_http_srv_on_req_rcv_cb(http_srv_cli_p cli, void *udata __unused,
 		resp->status_code = 400;
 		return (HTTP_SRV_CB_CONTINUE);
 	}
-	if (0 == (req->flags & HTTP_SRV_RD_F_HOST_IS_LOCAL)) {
-		resp->status_code = 403;
-		return (HTTP_SRV_CB_CONTINUE);
-	}
+	/* 取消 host 校验：如果请求的Host不是本地的，就返回403 Forbidden状态码 */
+	// if (0 == (req->flags & HTTP_SRV_RD_F_HOST_IS_LOCAL)) {
+	// 	resp->status_code = 403;
+	// 	return (HTTP_SRV_CB_CONTINUE);
+	// }
 
 	/* Statistic request. */
 	if (HTTP_REQ_METHOD_GET == req->line.method_code &&
